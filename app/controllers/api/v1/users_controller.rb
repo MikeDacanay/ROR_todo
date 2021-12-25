@@ -1,7 +1,8 @@
 module Api
     module V1
         class UsersController < ApplicationController
-            before_action only: [:index, :show]
+            skip_before_action :verify_authenticity_token
+            before_action only: [:index, :show, :update]
 
             def index
                 @users = User.all
@@ -15,14 +16,30 @@ module Api
                 render :show, status: 200
             end
 
-            private
-            
-            def set_user
-                @user = User.find(params[:id])
+            def create
+                @user = User.new(user_params)
+
+                if @user.save
+                    render :show, status: 200
+                else
+                    render json: {error: @user.errors.message}, status: 422
+                end
             end
 
+            def update
+                @user = User.find(params[:id])
+
+                if @user.update(user_params)
+                    render :update, status: 200
+                else
+                    render json: {error: @user.errors.message}, status: 422
+                end
+            end
+
+            private
+
             def user_params
-                params.require(:users).permit(:id)
+                params.require(:user).permit(:username, :password)
             end
         end
     end

@@ -1,0 +1,1 @@
+json.user @user, :username, :created_at, :updated_at
