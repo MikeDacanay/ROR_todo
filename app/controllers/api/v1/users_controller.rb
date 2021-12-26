@@ -2,7 +2,7 @@ module Api
     module V1
         class UsersController < ApplicationController
             skip_before_action :verify_authenticity_token
-            before_action only: [:index, :show, :update]
+            before_action only: [:update, :create, :index, :show, :destroy]
 
             def index
                 @users = User.all
@@ -31,6 +31,17 @@ module Api
 
                 if @user.update(user_params)
                     render :update, status: 200
+                else
+                    render json: {error: @user.errors.message}, status: 422
+                end
+            end
+
+
+            def destroy
+                @user = User.find(params[:id])
+
+                if @user.destroy
+                    render json: {message: "User ID:#{params[:id]} deleted"}
                 else
                     render json: {error: @user.errors.message}, status: 422
                 end
