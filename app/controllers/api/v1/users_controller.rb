@@ -11,9 +11,7 @@ module Api
             end
 
             def show
-                @user ||= User.includes(:items).find(params[:id])
-
-                puts @user
+                @user ||= user
 
                 render :show, status: 200
             end
@@ -24,28 +22,28 @@ module Api
                 if @user.save
                     render :show, status: 200
                 else
-                    render json: {error: @user.errors.message}, status: 422
+                    render error
                 end
             end
 
             def update
-                @user = User.find(params[:id])
+                @user ||= user
 
                 if @user.update(user_params)
                     render :update, status: 200
                 else
-                    render json: {error: @user.errors.message}, status: 422
+                    render error
                 end
             end
 
 
             def destroy
-                @user = User.find(params[:id])
+                @user ||= user
 
                 if @user.destroy
                     render json: {message: "User ID:#{params[:id]} deleted"}
                 else
-                    render json: {error: @user.errors.message}, status: 422
+                    render error
                 end
             end
 
@@ -53,6 +51,14 @@ module Api
 
             def user_params
                 params.require(:user).permit(:username, :password)
+            end
+
+            def user
+                User.find(params[:id])
+            end
+
+            def error
+                json: {error: @user.errors.message}, status: 422
             end
         end
     end

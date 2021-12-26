@@ -3,8 +3,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users, param: :id, only: [:create, :index, :show, :update, :destroy]
-      resources :items, param: :id, only: [:create, :index, :show, :update, :destroy]
+      resources :users, param: :id, only: [:create, :index, :show, :update, :destroy] do
+        resources :items, param: :id, only: [:create, :show, :update, :destroy]
+      end
     end
   end
 
