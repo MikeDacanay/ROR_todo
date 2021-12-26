@@ -11,7 +11,9 @@ module Api
             end
 
             def show
-                @user = User.find(params[:id])
+                @user ||= User.includes(:items).find(params[:id])
+
+                puts @user
 
                 render :show, status: 200
             end
